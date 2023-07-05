@@ -1,14 +1,32 @@
 import { Context } from "../context";
 import { QueryResolvers, EmployeeResolvers } from "../../generated/graphql";
 import { findEmployee } from "../../features/hr/findEmployee/findEmployee";
+import { AuthResources } from "../../authorization/resources";
 
 const Employee: EmployeeResolvers<Context> = {
-  dateOfBirth(parent, _, { user, authz }) {
+  async id(parent, _, { user, authz }) {
     if (!user) return null;
 
-    return authz.isFieldAllowed(user, "dateOfBirth", parent)
-      ? parent.dateOfBirth ?? null
-      : null;
+    const canRead = await authz.canReadField(
+      user,
+      "id",
+      parent,
+      AuthResources.Employee
+    );
+
+    return canRead ? parent.id ?? null : null;
+  },
+  async dateOfBirth(parent, _, { user, authz }) {
+    if (!user) return null;
+
+    const canRead = await authz.canReadField(
+      user,
+      "dateOfBirth",
+      parent,
+      AuthResources.Employee
+    );
+
+    return canRead ? parent.dateOfBirth ?? null : null;
   },
 };
 

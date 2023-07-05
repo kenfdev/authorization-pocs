@@ -1,4 +1,5 @@
 export interface LoggedInUser {
+  type: "LoggedInUser";
   id: string;
   role: "admin" | "member" | "guest";
 }
@@ -14,6 +15,7 @@ export function createLoggedInUser({
   const role = id === "1" ? "admin" : id === "2" ? "member" : "guest";
 
   return {
+    type: "LoggedInUser",
     id,
     role,
   };

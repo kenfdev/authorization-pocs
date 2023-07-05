@@ -22,6 +22,7 @@ function createClass(
 
 export const AuthResources = {
   Employee: createClass("Employee"),
+  LoggedInUser: createClass("LoggedInUser"),
 };
 
 export type AuthResource = ValueOf<typeof AuthResources>;

@@ -27,7 +27,8 @@
   "dependencies": {
     "@prisma/client": "^4.16.2",
     "graphql": "^16.7.1",
-    "graphql-yoga": "^4.0.3"
+    "graphql-yoga": "^4.0.3",
+    "oso": "^0.27.0"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

@@ -3,7 +3,7 @@ type Query {
 }
 
 type Employee {
-  id: ID!
+  id: ID
   name: String!
   dateOfBirth: String
 }

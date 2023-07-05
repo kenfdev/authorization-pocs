@@ -1,10 +1,12 @@
 import { LoggedInUser } from "../../domain/entities/LoggedInUser";
 import { NonFunctionPropertyNames } from "../../shared/types/utils";
+import { AuthResource } from "../resources";
 
 export interface AuthorizationService {
-  isFieldAllowed<R>(
+  canReadField<R>(
     actor: LoggedInUser,
     fieldName: NonFunctionPropertyNames<R>,
-    resource: R
-  ): boolean;
+    resource: R,
+    resourceClass: AuthResource
+  ): Promise<boolean>;
 }

@@ -3,11 +3,11 @@ import { NonFunctionPropertyNames } from "../../shared/types/utils";
 import { AuthorizationService } from "./AuthorizationService";
 
 export class InmemoryAuthorizationService implements AuthorizationService {
-  isFieldAllowed<R>(
+  async canReadField<R>(
     actor: LoggedInUser,
     fieldName: NonFunctionPropertyNames<R>,
     resource: R
-  ): boolean {
+  ): Promise<boolean> {
     return true;
   }
 }
