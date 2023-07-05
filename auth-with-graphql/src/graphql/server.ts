@@ -6,7 +6,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 
 export const start = () => {
-  const schema = createSchema({
+  const schema = createSchema<Context>({
     typeDefs: readFileSync(path.join(__dirname, "./schema.graphql"), {
       encoding: "utf-8",
     }),

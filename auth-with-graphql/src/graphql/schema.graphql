@@ -1,9 +1,19 @@
 type Query {
-  findEmployee(id: ID!): Employee
+  findEmployee(id: ID!): FindEmployeeResult!
+}
+
+union FindEmployeeResult = FindEmployeeSuccess | NotFound
+
+type FindEmployeeSuccess {
+  employee: Employee
 }
 
 type Employee {
   id: ID
   name: String!
   dateOfBirth: String
+}
+
+type NotFound {
+  message: String!
 }

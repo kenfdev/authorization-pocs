@@ -7,8 +7,7 @@ import {
   AuthorizationService,
   createOsoAuthorizationService,
 } from "../authorization/services";
-import { Oso } from "oso";
-import path from "path";
+import { prisma } from "../shared/types/db/prisma";
 
 export interface Context {
   request: Request;
@@ -27,7 +26,7 @@ export async function createContext(request: Request): Promise<Context> {
   return {
     user,
     request,
-    prisma: new PrismaClient(),
+    prisma,
     authz: osoAuthorizationService,
   };
 }

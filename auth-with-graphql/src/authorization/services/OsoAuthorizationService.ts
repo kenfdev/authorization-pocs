@@ -5,6 +5,7 @@ import { AuthorizationService } from "./AuthorizationService";
 import path from "path";
 import { AuthResource, AuthResources } from "../resources";
 import {
+  EMPLOYEE_PRIVATE_FIELDS,
   EMPLOYEE_PUBLIC_FIELDS,
   // EmployeeFields,
 } from "../policies/fields/EmployeeFields";
@@ -15,20 +16,14 @@ export class OsoAuthorizationService implements AuthorizationService {
   async canReadField<R>(
     actor: LoggedInUser,
     fieldName: NonFunctionPropertyNames<R>,
-    resource: R,
-    ResourceClass: AuthResource
+    resource: R
   ): Promise<boolean> {
     try {
       console.log(
         "authorizing",
         JSON.stringify({ actor, fieldName, resource })
       );
-      await this.oso.authorizeField(
-        actor,
-        "read",
-        new ResourceClass(resource),
-        fieldName
-      );
+      await this.oso.authorizeField(actor, "read", resource, fieldName);
       return true;
     } catch (e) {
       return false;
@@ -38,13 +33,16 @@ export class OsoAuthorizationService implements AuthorizationService {
 
 export const createOsoAuthorizationService = async () => {
   const oso = new Oso();
-  // oso.registerClass(EmployeeFields);
-  oso.registerClass(Object, {
+  oso.registerClass(class {}, {
     name: "LoggedInUser",
     isaCheck: (v) => v.type === "LoggedInUser",
   });
-  oso.registerClass(AuthResources.Employee);
+  oso.registerClass(class {}, {
+    name: "Employee",
+    isaCheck: (v) => v.type === "Employee",
+  });
   oso.registerConstant(EMPLOYEE_PUBLIC_FIELDS, "EMPLOYEE_PUBLIC_FIELDS");
+  oso.registerConstant(EMPLOYEE_PRIVATE_FIELDS, "EMPLOYEE_PRIVATE_FIELDS");
   await oso.loadFiles([path.join(__dirname, "../policies", "main.polar")]);
 
   return new OsoAuthorizationService(oso);

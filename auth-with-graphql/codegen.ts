@@ -6,6 +6,16 @@ const config: CodegenConfig = {
   generates: {
     "src/generated/graphql.ts": {
       plugins: ["typescript", "typescript-resolvers"],
+      config: {
+        mapperTypeSuffix: "Model",
+        mappers: {
+          FindEmployeeResult:
+            "../features/hr/findEmployee/findEmployee#FindEmployeeResult",
+          Employee: "../domain/entities/Employee#Employee",
+        },
+        contextType: "../graphql/context#Context",
+        enumsAsTypes: true,
+      },
     },
   },
 };

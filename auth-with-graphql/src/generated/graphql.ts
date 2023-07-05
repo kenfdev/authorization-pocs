@@ -1,4 +1,7 @@
 import { GraphQLResolveInfo } from 'graphql';
+import { FindEmployeeResult as FindEmployeeResultModel } from '../features/hr/findEmployee/findEmployee';
+import { Employee as EmployeeModel } from '../domain/entities/Employee';
+import { Context } from '../graphql/context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -6,6 +9,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: 
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -23,9 +27,21 @@ export type Employee = {
   name: Scalars['String']['output'];
 };
 
+export type FindEmployeeResult = FindEmployeeSuccess | NotFound;
+
+export type FindEmployeeSuccess = {
+  __typename?: 'FindEmployeeSuccess';
+  employee?: Maybe<Employee>;
+};
+
+export type NotFound = {
+  __typename?: 'NotFound';
+  message: Scalars['String']['output'];
+};
+
 export type Query = {
   __typename?: 'Query';
-  findEmployee?: Maybe<Employee>;
+  findEmployee: FindEmployeeResult;
 };
 
 
@@ -105,8 +121,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
-  Employee: ResolverTypeWrapper<Employee>;
+  Employee: ResolverTypeWrapper<EmployeeModel>;
+  FindEmployeeResult: ResolverTypeWrapper<FindEmployeeResultModel>;
+  FindEmployeeSuccess: ResolverTypeWrapper<Omit<FindEmployeeSuccess, 'employee'> & { employee?: Maybe<ResolversTypes['Employee']> }>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  NotFound: ResolverTypeWrapper<NotFound>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
 };
@@ -114,25 +133,45 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']['output'];
-  Employee: Employee;
+  Employee: EmployeeModel;
+  FindEmployeeResult: FindEmployeeResultModel;
+  FindEmployeeSuccess: Omit<FindEmployeeSuccess, 'employee'> & { employee?: Maybe<ResolversParentTypes['Employee']> };
   ID: Scalars['ID']['output'];
+  NotFound: NotFound;
   Query: {};
   String: Scalars['String']['output'];
 };
 
-export type EmployeeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Employee'] = ResolversParentTypes['Employee']> = {
+export type EmployeeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Employee'] = ResolversParentTypes['Employee']> = {
   dateOfBirth?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  findEmployee?: Resolver<Maybe<ResolversTypes['Employee']>, ParentType, ContextType, RequireFields<QueryFindEmployeeArgs, 'id'>>;
+export type FindEmployeeResultResolvers<ContextType = Context, ParentType extends ResolversParentTypes['FindEmployeeResult'] = ResolversParentTypes['FindEmployeeResult']> = {
+  __resolveType: TypeResolveFn<'FindEmployeeSuccess' | 'NotFound', ParentType, ContextType>;
 };
 
-export type Resolvers<ContextType = any> = {
+export type FindEmployeeSuccessResolvers<ContextType = Context, ParentType extends ResolversParentTypes['FindEmployeeSuccess'] = ResolversParentTypes['FindEmployeeSuccess']> = {
+  employee?: Resolver<Maybe<ResolversTypes['Employee']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type NotFoundResolvers<ContextType = Context, ParentType extends ResolversParentTypes['NotFound'] = ResolversParentTypes['NotFound']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  findEmployee?: Resolver<ResolversTypes['FindEmployeeResult'], ParentType, ContextType, RequireFields<QueryFindEmployeeArgs, 'id'>>;
+};
+
+export type Resolvers<ContextType = Context> = {
   Employee?: EmployeeResolvers<ContextType>;
+  FindEmployeeResult?: FindEmployeeResultResolvers<ContextType>;
+  FindEmployeeSuccess?: FindEmployeeSuccessResolvers<ContextType>;
+  NotFound?: NotFoundResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
 };
 
